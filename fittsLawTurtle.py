@@ -40,27 +40,32 @@ pointerTurtle = turtle.Turtle()
 pointerTurtle.left(125)
 pointerTurtle.shapesize()
 
+progressTurtle = turtle.Turtle()
+progressTurtle.hideturtle()
+progressTurtle.penup()
+progressTurtle.setpos(0,-250)
+
 
 # This function draw blue circle based on radius
-def drawCircle(tut, rad):
-    tut.color("blue", "blue")
-    tut.begin_fill()
-    tut.circle(rad)
-    tut.end_fill()
+def drawCircle(tur, rad):
+    tur.color("blue", "blue")
+    tur.begin_fill()
+    tur.circle(rad)
+    tur.end_fill()
 
-def drawRectangle(tut, x, y, width, height):
-    tut.up()
-    tut.goto(x, y)
-    tut.down()
-    tut.forward(width)          
-    tut.left(90)
-    tut.forward(height)
-    tut.left(90)
-    tut.forward(width)
-    tut.left(90)
-    tut.forward(height)
-    tut.left(90)
-    tut.up()
+def drawRectangle(tur, x, y, width, height):
+    tur.up()
+    tur.goto(x, y)
+    tur.pendown()
+    tur.forward(width)          
+    tur.left(90)
+    tur.forward(height)
+    tur.left(90)
+    tur.forward(width)
+    tur.left(90)
+    tur.forward(height)
+    tur.left(90)
+    tur.penup()
 
 # This function draw circle at a distance based on distance list
 def createCircle(tur):
@@ -87,16 +92,21 @@ def glowCircle():
     drawTurtle.fillcolor("red")
 
 
-def unglowCircle(tut):
-    tut.fillcolor("blue")
+def unglowCircle(tur):
+    tur.fillcolor("blue")
 
 def handler_goto(x, y):
     pointerTurtle.penup()
     pointerTurtle.goto(x, y)
     pointerTurtle.goto(0, 0)
     
+    # Keeps track of progress
+    testsLeft = len(circleTestBlocks)
+    progressTurtle.clear()
+    progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
+    
     # Creates a recursive function calling itself until all test cases are complete
-    if len(circleTestBlocks) != 0:
+    if testsLeft > 0:
         resetCursor()
         createCircle(drawTurtle)
         windowScreen.onclick(handler_goto)
