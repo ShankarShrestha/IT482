@@ -33,19 +33,34 @@ window.screensize()
 window.setup(width=1.0, height=1.0)
 
 # set Turtle
-circleTurtle = turtle.Turtle()
-pointerTurtle = turtle.Turtle()
+drawTurtle = turtle.Turtle()
+drawTurtle.hideturtle()
 
+pointerTurtle = turtle.Turtle()
 pointerTurtle.left(125)
 pointerTurtle.shapesize()
 
 
 # This function draw blue circle based on radius
-def drawCircle(tut,rad):
+def drawCircle(tut, rad):
     tut.color("blue", "blue")
     tut.begin_fill()
     tut.circle(rad)
     tut.end_fill()
+
+def drawRectangle(tut, x, y, width, height):
+    tut.up()
+    tut.goto(x, y)
+    tut.down()
+    tut.forward(width)          
+    tut.left(90)
+    tut.forward(height)
+    tut.left(90)
+    tut.forward(width)
+    tut.left(90)
+    tut.forward(height)
+    tut.left(90)
+    tut.up()
 
 # This function draw circle at a distance based on distance list
 def createCircle(tur):
@@ -61,7 +76,6 @@ def createCircle(tur):
     #distance = [-500, -250, -100, 100, 250, 500]
     #radius = [12.5, 25, 50]
     
-    tur.hideturtle()
     tur.penup()
     tur.setx(distance * direction)
     tur.pendown()
@@ -70,7 +84,7 @@ def createCircle(tur):
 
 # Glow the circle -- Not working
 def glowCircle():
-    circleTurtle.fillcolor("red")
+    drawTurtle.fillcolor("red")
 
 
 def unglowCircle(tut):
@@ -84,12 +98,10 @@ def handler_goto(x, y):
     # Creates a recursive function calling itself until all test cases are complete
     if len(circleTestBlocks) != 0:
         resetCursor()
-        createCircle(circleTurtle)
+        createCircle(drawTurtle)
         windowScreen.onclick(handler_goto)
     else:
-        # Clears window at the end and displays a thank you
-        circleTurtle.clear()
-        turtle.write("Thank you", font=(x,30))
+        endScreen()
     
 # Resets cursor to the center of the screen
 def resetCursor():
@@ -97,15 +109,42 @@ def resetCursor():
     halfScreenHight = int(round(win32api.GetSystemMetrics(1)/2))
     win32api.SetCursorPos((halfScreenWidth,halfScreenHight))
 
-##
+# Clears window at the end and displays a thank you
+def endScreen():
+        drawTurtle.clear()
+        turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
+        
+# Makes a consent warning screen
 def consentScreen():
-    circleTurtle.write("You have been chose to participate in a research study at Minnesota State University, Mankato. \nThe purpose of this study is to examine users’ abilities to point and click on random circles shown on a screen. \nParticipating in this study is voluntary. You can decide to stop at any time. To withdraw from the study, \nyou can close the window before it is completed. This study includes only people willing to participate. \nIf you have any questions, you may ask the Levi or Shankar. \n\nThe responses will be anonymous. There are no direct benefits for participation. The study will include 15 \nindividuals and should take about 30 minutes per person to complete. \n\nIf you agree to participate in the study and are at least 18 years of age, click anywhere to begin.\n", font=("Arial", 11, "normal"), align="center")
+    # Title
+    drawTurtle.up()
+    drawTurtle.setpos(0, 250)
+    drawTurtle.write("Consent", font=("Arial", 30, "bold"), align="center")
+    drawTurtle.setpos(0, 0)
+    
+    # Body 
+    drawTurtle.write("You have been chose to participate in a research study at Minnesota State University, Mankato." + 
+    "\nThe purpose of this study is to examine users’ abilities to point and click on random circles shown on a screen." +
+    "\nParticipating in this study is voluntary. You can decide to stop at any time. To withdraw from the study," +
+    "\nyou can close the window before finishing. Results of the study will include only people willing to participate." +
+    "\nIf you have any questions, you may ask the Levi or Shankar." +
+    "\n\nThe responses will be anonymous. There are no direct benefits for participation. The study will include at least 15" +
+    "\nother individuals and should take about 30 minutes per person to complete." +
+    "\n\nIf you agree to participate in the study and are at least 18 years of age, click anywhere to begin." +
+    "\n", font=("Arial", 11, "normal"), align="center")
+    
+    # Agreement box
+    drawRectangle(drawTurtle, -50, -85, 100, 25)
+    drawTurtle.setpos(-18, -85)
+    drawTurtle.write("I Agree", font=("Arial", 10, "bold"))
+    drawTurtle.setpos(0, 0)
+    
 
 consentScreen()
 windowScreen.onclick(handler_goto)
 
 # Does not work
-# circleTurtle.onclick(glowCircle())
+# drawTurtle.onclick(glowCircle())
 
 
 turtle.done()
