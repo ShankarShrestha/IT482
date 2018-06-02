@@ -97,12 +97,15 @@ def resetCursor():
     halfScreenHight = int(round(win32api.GetSystemMetrics(1)/2))
     win32api.SetCursorPos((halfScreenWidth,halfScreenHight))
 
+##
+def consentScreen():
+    circleTurtle.write("You have been chose to participate in a research study at Minnesota State University, Mankato. \nThe purpose of this study is to examine users’ abilities to point and click on random circles shown on a screen. \nParticipating in this study is voluntary. You can decide to stop at any time. To withdraw from the study, \nyou can close the window before it is completed. This study includes only people willing to participate. \nIf you have any questions, you may ask the Levi or Shankar. \n\nThe responses will be anonymous. There are no direct benefits for participation. The study will include 15 \nindividuals and should take about 30 minutes per person to complete. \n\nIf you agree to participate in the study and are at least 18 years of age, click anywhere to begin.\n", font=("Arial", 11, "normal"), align="center")
 
-createCircle(circleTurtle)
+consentScreen()
 windowScreen.onclick(handler_goto)
 
 # Does not work
 # circleTurtle.onclick(glowCircle())
 
 
-turtle.mainloop()
+turtle.done()
