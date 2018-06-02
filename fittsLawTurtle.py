@@ -81,13 +81,15 @@ def handler_goto(x, y):
     pointerTurtle.goto(x, y)
     pointerTurtle.goto(0, 0)
     
-    # Creates a recursive function calling itself until the all test cases are complete
+    # Creates a recursive function calling itself until all test cases are complete
     if len(circleTestBlocks) != 0:
         resetCursor()
         createCircle(circleTurtle)
         windowScreen.onclick(handler_goto)
     else:
+        # Clears window at the end and displays a thank you
         circleTurtle.clear()
+        turtle.write("Thank you", font=(x,30))
     
 # Resets cursor to the center of the screen
 def resetCursor():
