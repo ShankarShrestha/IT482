@@ -19,7 +19,7 @@ def generateTests():
                        ('small', 'long', 'right'), ('medium', 'long', 'right'), ('large', 'long', 'right')]
     
     for i in range(len(circleBaseTests)):
-        for y in range(1):
+        for y in range(10):
             circleTestBlocks.append(circleBaseTests[i])
 
 # Creates all test cases
