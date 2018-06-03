@@ -1,6 +1,7 @@
 import turtle
 import random
 import win32api
+import time
 
 # Stores all unfinished test (120 test cases in total)
 circleTestBlocks = []
@@ -23,17 +24,14 @@ def generateTests():
             circleTestBlocks.append(circleBaseTests[i])
 
 # Translates a circles dimensions to pixel values
-# @parm a tuple of circle values
-# @return a tuple of pixel equivalents to the given circle
-def translateCircle(circle):
-    dimensions = {'small': 12.5, 'medium': 25, 'large': 50, 'short': 250, 'long': 500, 'right': 1, 'left': -1}
+# @parm circleDim a tuple of dimensions values
+# @return a tuple in pixel equivalents of circle
+def translateCircle(circleDim):
+    dimensions = {'small': 12.5, 'medium': 25, 'large': 50, 'short': 100, 'long': 250, 'right': 1, 'left': -1}
     radius = dimensions[circle[0]]
     distance = dimensions[circle[1]]
     direction = dimensions[circle[2]]
     return (radius, distance, direction)
-
-# Creates all test cases
-generateTests()
 
 # Sets up screen property
 windowScreen = turtle.Screen()
@@ -80,25 +78,24 @@ def drawRectangle(tur, x, y, width, height):
     tur.penup()
 
 # This function draw circle at a distance based on distance list
-def createCircle(tur):
+# @parm tur the turtle that draws
+# @parm circlePix a tuple of pixel valuse
+def createCircle(tur, circlePix):
     tur.clear()
-    
-    # Get a circle to test and translates it to pixel values
-    circle = translateCircle(getCircle())
     
     # Old code
     # distance = [-500, -250, -100, 100, 250, 500]
     # radius = [12.5, 25, 50]
     
     tur.penup()
-    tur.setx(circle[1] * circle[2])
+    tur.setx(circlePix[1] * circlePix[2])
     tur.pendown()
-    drawCircle(tur, circle[0])
+    drawCircle(tur, circlePix[0])
 
 
 # Glow the circle -- Not working
-def glowCircle():
-    drawTurtle.fillcolor("red")
+def glowCircle(tur):
+    tur.fillcolor("red")
 
 
 def unglowCircle(tur):
@@ -109,7 +106,7 @@ def handler_goto(x, y):
     # pointerTurtle.goto(x, y)
     # pointerTurtle.goto(0, 0)
     
-    # Gives feedback to users to track progress
+    # Gives feedback to users with tracked progress
     testsLeft = len(circleTestBlocks)
     progressTurtle.clear()
     progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
@@ -117,7 +114,13 @@ def handler_goto(x, y):
     # Creates a recursive function calling itself until all test cases are complete
     if testsLeft > 0:
         resetCursor()
-        createCircle(drawTurtle)
+            
+        # Get a circle to test and translates it to pixel values
+        circleDim = getCircle()
+        circlePix = translateCircle(circleDim)
+        
+        # Draws the circle and finds clicked position
+        createCircle(drawTurtle, circlePix)
         windowScreen.onclick(handler_goto)
     else:
         endScreen()
@@ -159,12 +162,14 @@ def consentScreen():
     drawTurtle.setpos(0, 0)
     
 
+# Creates all test cases
+generateTests()
+
 # Starts running the program
 consentScreen()
 windowScreen.onclick(handler_goto)
 
 # Does not work
 # drawTurtle.onclick(glowCircle())
-
 
 turtle.done()
