@@ -22,24 +22,34 @@ def generateTests():
         for y in range(10):
             circleTestBlocks.append(circleBaseTests[i])
 
+# Translates a circles dimensions to pixel values
+# @parm a tuple of circle values
+# @return a tuple of pixel equivalents to the given circle
+def translateCircle(circle):
+    dimensions = {'small': 12.5, 'medium': 25, 'large': 50, 'short': 250, 'long': 500, 'right': 1, 'left': -1}
+    radius = dimensions[circle[0]]
+    distance = dimensions[circle[1]]
+    direction = dimensions[circle[2]]
+    return (radius, distance, direction)
+
 # Creates all test cases
 generateTests()
 
-# Screen property
+# Sets up screen property
 windowScreen = turtle.Screen()
 windowScreen.title("Fitts Law Test")
 window = turtle.Screen()
 window.screensize()
 window.setup(width=1.0, height=1.0)
 
-# set Turtle
+# Sets up Turtles
 drawTurtle = turtle.Turtle()
 drawTurtle.hideturtle()
 drawTurtle.speed(0)
 
-pointerTurtle = turtle.Turtle()
-pointerTurtle.left(125)
-pointerTurtle.shapesize()
+# pointerTurtle = turtle.Turtle()
+# pointerTurtle.left(125)
+# pointerTurtle.shapesize()
 
 progressTurtle = turtle.Turtle()
 progressTurtle.hideturtle()
@@ -54,6 +64,7 @@ def drawCircle(tur, rad):
     tur.circle(rad)
     tur.end_fill()
 
+# This function draw a rectangle on screen based on given values
 def drawRectangle(tur, x, y, width, height):
     tur.up()
     tur.goto(x, y)
@@ -72,20 +83,17 @@ def drawRectangle(tur, x, y, width, height):
 def createCircle(tur):
     tur.clear()
     
-    # Get a circle to test and translates it to pixels values
-    circle = getCircle()
-    dimensions = {'small': 12.5, 'medium': 25, 'large': 50, 'short': 250, 'long': 500, 'right': 1, 'left': -1}
-    radius = dimensions[circle[0]]
-    distance = dimensions[circle[1]]
-    direction = dimensions[circle[2]]
+    # Get a circle to test and translates it to pixel values
+    circle = translateCircle(getCircle())
     
-    #distance = [-500, -250, -100, 100, 250, 500]
-    #radius = [12.5, 25, 50]
+    # Old code
+    # distance = [-500, -250, -100, 100, 250, 500]
+    # radius = [12.5, 25, 50]
     
     tur.penup()
-    tur.setx(distance * direction)
+    tur.setx(circle[1] * circle[2])
     tur.pendown()
-    drawCircle(tur, radius)
+    drawCircle(tur, circle[0])
 
 
 # Glow the circle -- Not working
@@ -97,11 +105,11 @@ def unglowCircle(tur):
     tur.fillcolor("blue")
 
 def handler_goto(x, y):
-    pointerTurtle.penup()
-    pointerTurtle.goto(x, y)
-    pointerTurtle.goto(0, 0)
+    # pointerTurtle.penup()
+    # pointerTurtle.goto(x, y)
+    # pointerTurtle.goto(0, 0)
     
-    # Keeps track of progress
+    # Gives feedback to users to track progress
     testsLeft = len(circleTestBlocks)
     progressTurtle.clear()
     progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
@@ -125,7 +133,7 @@ def endScreen():
         drawTurtle.clear()
         turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
         
-# Makes a consent warning screen
+# Makes a consent screen
 def consentScreen():
     # Title
     drawTurtle.up()
@@ -151,6 +159,7 @@ def consentScreen():
     drawTurtle.setpos(0, 0)
     
 
+# Starts running the program
 consentScreen()
 windowScreen.onclick(handler_goto)
 
