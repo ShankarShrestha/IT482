@@ -35,6 +35,7 @@ window.setup(width=1.0, height=1.0)
 # set Turtle
 drawTurtle = turtle.Turtle()
 drawTurtle.hideturtle()
+drawTurtle.speed(0)
 
 pointerTurtle = turtle.Turtle()
 pointerTurtle.left(125)
@@ -144,9 +145,9 @@ def consentScreen():
     "\n", font=("Arial", 11, "normal"), align="center")
     
     # Agreement box
-    drawRectangle(drawTurtle, -50, -85, 100, 25)
-    drawTurtle.setpos(-18, -82)
-    drawTurtle.write("I Agree", font=("Arial", 10, "bold"))
+    drawRectangle(drawTurtle, -54, -85, 100, 25)
+    drawTurtle.setpos(0, -82)
+    drawTurtle.write("I Agree", font=("Arial", 10, "bold"), align="center")
     drawTurtle.setpos(0, 0)
     
 
