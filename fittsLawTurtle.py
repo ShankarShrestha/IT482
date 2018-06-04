@@ -2,6 +2,7 @@ import turtle
 import random
 import win32api
 import time
+import math
 
 # Stores all unfinished test (120 test cases in total)
 circleTestBlocks = []
@@ -28,9 +29,9 @@ def generateTests():
 # @return a tuple in pixel equivalents of circle
 def translateCircle(circleDim):
     dimensions = {'small': 12.5, 'medium': 25, 'large': 50, 'short': 100, 'long': 250, 'right': 1, 'left': -1}
-    radius = dimensions[circle[0]]
-    distance = dimensions[circle[1]]
-    direction = dimensions[circle[2]]
+    radius = dimensions[circleDim[0]]
+    distance = dimensions[circleDim[1]]
+    direction = dimensions[circleDim[2]]
     return (radius, distance, direction)
 
 # Sets up screen property
@@ -105,11 +106,9 @@ def handler_goto(x, y):
     # pointerTurtle.penup()
     # pointerTurtle.goto(x, y)
     # pointerTurtle.goto(0, 0)
-    
-    # Gives feedback to users with tracked progress
+
     testsLeft = len(circleTestBlocks)
-    progressTurtle.clear()
-    progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
+    progressUpdate(testsLeft)
     
     # Creates a recursive function calling itself until all test cases are complete
     if testsLeft > 0:
@@ -124,6 +123,18 @@ def handler_goto(x, y):
         windowScreen.onclick(handler_goto)
     else:
         endScreen()
+
+# Checks to see if circle was hit
+# @parm coor is the x, y coordinates
+# @parm circlePix the pixel location of the circle
+# @return hit equals true otherwise false
+def insideCircle(coor, circlePix):
+    return (math.sqrt((coor[0] - circlePix[1]*circlePix[2])**2 + (coor[1] - 0)**2) <= (circlePix[0]**2))
+    
+# Updates feedback to users with tracked progress
+def progressUpdate(testsLeft):
+    progressTurtle.clear()
+    progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
     
 # Resets cursor to the center of the screen
 def resetCursor():
