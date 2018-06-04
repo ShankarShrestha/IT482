@@ -127,7 +127,7 @@ def clicked(x, y):
         windowScreen.onclick(clicked)
     else:
         endScreen()
-
+    
 # Keeps time between clicks
 clickTimer = 0
 
@@ -150,7 +150,7 @@ def currentTime():
 # @parm circlePix the pixel location of the circle center
 # @return hit equals true otherwise false
 def insideCircle(coor, circlePix):
-    return (math.sqrt((coor[0] - circlePix[1]*circlePix[2])**2 + (coor[1] - 0)**2) <= (circlePix[0]**2))
+    return (math.sqrt((abs(coor[0]) - float(circlePix[1]))**2 + (abs(coor[1]) - 0)**2) < (float(circlePix[0])))
     
 # Updates feedback to users with tracked progress
 def progressUpdate(testsLeft):
