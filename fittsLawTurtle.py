@@ -4,14 +4,14 @@ import win32api
 import time
 import math
 
-# Stores all unfinished test (120 test cases in total)
+# Stores all unfinished 120 test cases
 circleTestBlocks = []
 
 # This function returns a randomly picked circle out of a set of 12 tests with 10 test blocks (120 tests)
 # @return (diameter, distance, direction)
 def getCircle():
-    circle = random.randint(0, len(circleTestBlocks)-1)
-    return circleTestBlocks.pop(circle)
+    index = random.randint(0, len(circleTestBlocks)-1)
+    return circleTestBlocks.pop(index)
 
 # Makes 120 test from 12 base cases repeating each 10 times
 def generateTests():
@@ -20,6 +20,7 @@ def generateTests():
                        ('small', 'short', 'right'), ('medium', 'short', 'right'), ('large', 'short', 'right'),
                        ('small', 'long', 'right'), ('medium', 'long', 'right'), ('large', 'long', 'right')]
     
+    # Creates 10 test blocks for each
     for i in range(len(circleBaseTests)):
         for y in range(10):
             circleTestBlocks.append(circleBaseTests[i])
@@ -110,23 +111,21 @@ def handler_goto(x, y):
     testsLeft = len(circleTestBlocks)
     progressUpdate(testsLeft)
     
-    # Creates a recursive function calling itself until all test cases are complete
+    # Controls a recursive function once it finishes all test cases
     if testsLeft > 0:
         resetCursor()
-            
-        # Get a circle to test and translates it to pixel values
-        circleDim = getCircle()
-        circlePix = translateCircle(circleDim)
-        
-        # Draws the circle and finds clicked position
+    
+        # Get a circle to test, translates to pixel values, and draws it
+        circlePix = translateCircle(getCircle())
         createCircle(drawTurtle, circlePix)
+        
         windowScreen.onclick(handler_goto)
     else:
         endScreen()
 
 # Checks to see if circle was hit
-# @parm coor is the x, y coordinates
-# @parm circlePix the pixel location of the circle
+# @parm coor is the x, y coordinates clicked
+# @parm circlePix the pixel location of the circle center
 # @return hit equals true otherwise false
 def insideCircle(coor, circlePix):
     return (math.sqrt((coor[0] - circlePix[1]*circlePix[2])**2 + (coor[1] - 0)**2) <= (circlePix[0]**2))
@@ -173,14 +172,10 @@ def consentScreen():
     drawTurtle.setpos(0, 0)
     
 
-# Creates all test cases
-generateTests()
-
 # Starts running the program
+generateTests()
 consentScreen()
 windowScreen.onclick(handler_goto)
 
-# Does not work
-# drawTurtle.onclick(glowCircle())
 
 turtle.done()
