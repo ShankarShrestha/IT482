@@ -107,11 +107,15 @@ def handler_goto(x, y):
     # pointerTurtle.penup()
     # pointerTurtle.goto(x, y)
     # pointerTurtle.goto(0, 0)
+    pass
 
+def clicked(x, y):
+    stopTimer()
+    
+    # Controls a recursive function once it finishes all test cases
     testsLeft = len(circleTestBlocks)
     progressUpdate(testsLeft)
     
-    # Controls a recursive function once it finishes all test cases
     if testsLeft > 0:
         resetCursor()
     
@@ -119,9 +123,27 @@ def handler_goto(x, y):
         circlePix = translateCircle(getCircle())
         createCircle(drawTurtle, circlePix)
         
-        windowScreen.onclick(handler_goto)
+        startTimer()
+        windowScreen.onclick(clicked)
     else:
         endScreen()
+
+# Keeps time between clicks
+clickTimer = 0
+
+# Records start time
+def startTimer():
+    global clickTimer
+    clickTimer = currentTime()
+
+# Records end time
+def stopTimer():
+    global clickTimer
+    clickTimer = currentTime() - clickTimer
+    
+# Returns the current time in milliseconds
+def currentTime():
+    return int(round(time.time()*1000))
 
 # Checks to see if circle was hit
 # @parm coor is the x, y coordinates clicked
@@ -175,7 +197,6 @@ def consentScreen():
 # Starts running the program
 generateTests()
 consentScreen()
-windowScreen.onclick(handler_goto)
-
-
+startTimer()
+windowScreen.onclick(clicked)
 turtle.done()
