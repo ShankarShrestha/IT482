@@ -7,6 +7,8 @@ import math
 # Stores all unfinished 120 test cases
 circleTestBlocks = []
 
+distPoints = []
+
 # This function returns a randomly picked circle out of a set of 12 tests with 10 test blocks (120 tests)
 # @return (diameter, distance, direction)
 def getCircle():
@@ -127,7 +129,21 @@ def clicked(x, y):
         windowScreen.onclick(clicked)
     else:
         endScreen()
-    
+
+# Adds cursor coordinates to a list of distPoints
+def addPoints():
+    px, py = win32api.GetCursorPos()
+    distPoints.append((px, py))
+
+# Calculates the distance between points
+def calcDistance():
+    distance = 0
+    if len(distPoints) > 1:
+        for index in range(len(distPoints)-1):
+            distance += math.hypot((distPoints[index+1][0] - distPoints[index][0]), (distPoints[index+1][1] - distPoints[index][1])) 
+    distPoints.clear()
+    return distance
+
 # Keeps time between clicks
 clickTimer = 0
 
