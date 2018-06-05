@@ -20,7 +20,6 @@ circleStack = []
 # @return (diameter, distance, direction)
 def getCircle(previous=False):
     circle = None
-<<<<<<< HEAD
     if len(circleTestBlocks) > 0 and not previous:
         index = random.randint(0, len(circleTestBlocks)-1)
         circleStack.append([circleTestBlocks[index],0])
@@ -28,15 +27,6 @@ def getCircle(previous=False):
     else:
         circle = circleStack[len(circleStack)-1][0]
     return translateCircle(circle)
-=======
-    if not previous:
-        index = random.randint(0, len(circleTestBlocks) - 1)
-        circleStack.append(circleTestBlocks[index])
-        circle = circleTestBlocks.pop(index)
-    else:
-        circle = circleStack[len(circleStack) - 1]
-    return circle
->>>>>>> d1a4465351dec14a73df506a999fc8d71a23c204
 
 
 # Makes 120 test from 12 base cases repeating each 10 times
@@ -161,7 +151,6 @@ def loopClick(x, y):
     # Controls a recursive function once it finishes all test cases
     testsLeft = len(circleTestBlocks)
     progressUpdate(testsLeft)
-<<<<<<< HEAD
     
     resetCursor()
     
@@ -181,30 +170,14 @@ def loopClick(x, y):
         errors = 0
     
     if testsLeft > 0 or redo:
-=======
-
-    if testsLeft > 0:
-        resetCursor()
-
-        global redo, circlePix
-        if circlePix: redo = not insideCircle((x, y), circlePix)
-
-        # Get a circle to test, translates to pixel values, and draws it
-        circlePix = translateCircle(getCircle(redo))
-        createCircle(drawTurtle, circlePix, redo)
-
-        # Makes a beep if circle was missed
-        if redo: win32api.Beep(750, 300)
-
->>>>>>> d1a4465351dec14a73df506a999fc8d71a23c204
-        startTimer()
 
         addPoint()
         print(distPoints)
         del distPoints[:]
         calcDistance()
         print("Distance: {}".format(str(calcDistance())))
-
+        
+        startTimer()
         windowScreen.onclick(loopClick)
     else:
         endScreen()
@@ -285,17 +258,10 @@ def resetCursor():
 
 # Clears window at the end and displays a thank you
 def endScreen():
-<<<<<<< HEAD
-        drawTurtle.clear()
-        turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
-        save()
-        
-=======
     drawTurtle.clear()
     turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
+    save()
 
-
->>>>>>> d1a4465351dec14a73df506a999fc8d71a23c204
 # Makes a consent screen
 def consentScreen():
     # Title
@@ -321,7 +287,7 @@ def consentScreen():
     drawTurtle.write("I Agree", font=("Arial", 10, "bold"), align="center")
     drawTurtle.setpos(0, 0)
 
-<<<<<<< HEAD
+# Exports raw data to csv file on desktop
 def save():
     csvfile = os.path.expanduser("~/Desktop") + "/rawData.csv"
     
@@ -330,8 +296,6 @@ def save():
         writer = csv.writer(output, lineterminator='\n')
         circleStack.insert(0,['Circle','Error'])
         writer.writerows(circleStack)
-=======
->>>>>>> d1a4465351dec14a73df506a999fc8d71a23c204
 
 # Starts running the program
 generateTests()
