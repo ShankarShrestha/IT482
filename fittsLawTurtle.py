@@ -10,11 +10,20 @@ circleTestBlocks = []
 # Stores points in accordance with cursor location to calculate distance
 distPoints = []
 
+# Keeps track of what circles have been used in what order
+circleStack = []
+
 # This function returns a randomly picked circle out of a set of 12 tests with 10 test blocks (120 tests)
 # @return (diameter, distance, direction)
-def getCircle():
-    index = random.randint(0, len(circleTestBlocks)-1)
-    return circleTestBlocks.pop(index)
+def getCircle(previous=False):
+    circle = None
+    if not previous:
+        index = random.randint(0, len(circleTestBlocks)-1)
+        circleStack.append(circleTestBlocks[index])
+        circle = circleTestBlocks.pop(index)
+    else:
+        circle = circleStack[len(circleStack)-1]
+    return circle
 
 # Makes 120 test from 12 base cases repeating each 10 times
 def generateTests():
@@ -61,8 +70,8 @@ progressTurtle.setpos(0,-250)
 
 
 # This function draw blue circle based on radius
-def drawCircle(tur, rad):
-    tur.color("blue", "blue")
+def drawCircle(tur, rad, color):
+    tur.color(color, color)
     tur.begin_fill()
     tur.circle(rad)
     tur.end_fill()
@@ -85,18 +94,20 @@ def drawRectangle(tur, x, y, width, height):
 # This function draw circle at a distance based on distance list
 # @parm tur the turtle that draws
 # @parm circlePix a tuple of pixel valuse
-def createCircle(tur, circlePix):
+def createCircle(tur, circlePix, redo):
     tur.clear()
     
     # Old code
     # distance = [-500, -250, -100, 100, 250, 500]
     # radius = [12.5, 25, 50]
     
+    if redo: color = "Red"
+    else: color = "Blue"
+    
     tur.penup()
     tur.goto((circlePix[1] * circlePix[2]), -(circlePix[0]))
     tur.pendown()
-    drawCircle(tur, circlePix[0])
-
+    drawCircle(tur, circlePix[0], color)
 
 # Glow the circle -- Not working
 def glowCircle(tur):
@@ -110,9 +121,13 @@ def handler_goto(x, y):
     # pointerTurtle.penup()
     # pointerTurtle.goto(x, y)
     # pointerTurtle.goto(0, 0)
-    pass
+    pass  
 
-def clicked(x, y):
+# Global values to identify missed clicks
+redo = False
+circlePix = None
+
+def loopClick(x, y):
     stopTimer()
     
     # Controls a recursive function once it finishes all test cases
@@ -121,13 +136,19 @@ def clicked(x, y):
     
     if testsLeft > 0:
         resetCursor()
-    
+        
+        global redo, circlePix
+        if not circlePix == None: redo = not insideCircle((x, y), circlePix)
+        
         # Get a circle to test, translates to pixel values, and draws it
-        circlePix = translateCircle(getCircle())
-        createCircle(drawTurtle, circlePix)
+        circlePix = translateCircle(getCircle(redo))
+        createCircle(drawTurtle, circlePix, redo)
+        
+        # Makes a beep if circle was missed
+        if redo == True: win32api.Beep(750, 300)
         
         startTimer()
-        windowScreen.onclick(clicked)
+        windowScreen.onclick(loopClick)
     else:
         endScreen()
 
@@ -172,7 +193,7 @@ def insideCircle(coor, circlePix):
 # Updates feedback to users with tracked progress
 def progressUpdate(testsLeft):
     progressTurtle.clear()
-    progressTurtle.write("Test left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
+    progressTurtle.write("Tests Left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
     
 # Resets cursor to the center of the screen
 def resetCursor():
@@ -215,5 +236,5 @@ def consentScreen():
 generateTests()
 consentScreen()
 startTimer()
-windowScreen.onclick(clicked)
+windowScreen.onclick(loopClick)
 turtle.done()
