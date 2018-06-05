@@ -22,7 +22,7 @@ def getCircle(previous=False):
     circle = None
     if len(circleTestBlocks) > 0 and not previous:
         index = random.randint(0, len(circleTestBlocks)-1)
-        circleStack.append([circleTestBlocks[index],0])
+        circleStack.append([circleTestBlocks[index],0,0])
         circle = circleTestBlocks.pop(index)
     else:
         circle = circleStack[len(circleStack)-1][0]
@@ -56,12 +56,11 @@ def translateCircle(circleDim):
 # Sets up screen property
 windowScreen = turtle.Screen()
 windowScreen.title("Fitts Law Test")
+windowScreen.screensize()
+windowScreen.setup(width=1.0, height=1.0)
 
 # bindScreen is a tkinter object
 bindScreen = windowScreen.getcanvas()
-# window = turtle.Screen()
-# window.screensize()
-# window.setup(width=1.0, height=1.0)
 
 # Sets up Turtles
 drawTurtle = turtle.Turtle()
@@ -143,7 +142,6 @@ def handler_goto(x, y):
 redo = False
 circlePix = None
 errors = 0
-
 
 def loopClick(x, y):
     stopTimer()
@@ -294,7 +292,7 @@ def save():
     #Exports a list of lists
     with open(csvfile, "w") as output:
         writer = csv.writer(output, lineterminator='\n')
-        circleStack.insert(0,['Circle','Error'])
+        circleStack.insert(0,['Circle','Error', 'Distance'])
         writer.writerows(circleStack)
 
 
