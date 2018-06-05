@@ -113,7 +113,6 @@ def createCircle(tur, circlePix, redo):
 def glowCircle(tur):
     tur.fillcolor("red")
 
-
 def unglowCircle(tur):
     tur.fillcolor("blue")
 
@@ -138,14 +137,14 @@ def loopClick(x, y):
         resetCursor()
         
         global redo, circlePix
-        if not circlePix == None: redo = not insideCircle((x, y), circlePix)
+        if circlePix: redo = not insideCircle((x, y), circlePix)
         
         # Get a circle to test, translates to pixel values, and draws it
         circlePix = translateCircle(getCircle(redo))
         createCircle(drawTurtle, circlePix, redo)
         
         # Makes a beep if circle was missed
-        if redo == True: win32api.Beep(750, 300)
+        if redo: win32api.Beep(750, 300)
         
         startTimer()
         windowScreen.onclick(loopClick)
