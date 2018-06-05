@@ -3,6 +3,8 @@ import random
 import win32api
 import time
 import math
+import os.path
+import csv
 
 # Stores all unfinished 120 test cases
 circleTestBlocks = []
@@ -17,13 +19,13 @@ circleStack = []
 # @return (diameter, distance, direction)
 def getCircle(previous=False):
     circle = None
-    if not previous:
+    if len(circleTestBlocks) > 0 and not previous:
         index = random.randint(0, len(circleTestBlocks)-1)
-        circleStack.append(circleTestBlocks[index])
+        circleStack.append([circleTestBlocks[index],0])
         circle = circleTestBlocks.pop(index)
     else:
-        circle = circleStack[len(circleStack)-1]
-    return circle
+        circle = circleStack[len(circleStack)-1][0]
+    return translateCircle(circle)
 
 # Makes 120 test from 12 base cases repeating each 10 times
 def generateTests():
@@ -34,7 +36,7 @@ def generateTests():
     
     # Creates 10 test blocks for each
     for i in range(len(circleBaseTests)):
-        for y in range(10):
+        for y in range(1):
             circleTestBlocks.append(circleBaseTests[i])
 
 # Translates a circles dimensions to pixel values
@@ -125,6 +127,7 @@ def handler_goto(x, y):
 # Global values to identify missed clicks
 redo = False
 circlePix = None
+errors = 0
 
 def loopClick(x, y):
     stopTimer()
@@ -133,19 +136,24 @@ def loopClick(x, y):
     testsLeft = len(circleTestBlocks)
     progressUpdate(testsLeft)
     
-    if testsLeft > 0:
-        resetCursor()
-        
-        global redo, circlePix
-        if circlePix: redo = not insideCircle((x, y), circlePix)
-        
-        # Get a circle to test, translates to pixel values, and draws it
-        circlePix = translateCircle(getCircle(redo))
-        createCircle(drawTurtle, circlePix, redo)
-        
-        # Makes a beep if circle was missed
-        if redo: win32api.Beep(750, 300)
-        
+    resetCursor()
+    
+    global redo, circlePix, errors
+    if circlePix: redo = not insideCircle((x, y), circlePix)
+    
+    # Get a circle to test, translates to pixel values, and draws it
+    circlePix = getCircle(redo)
+    createCircle(drawTurtle, circlePix, redo)
+    
+    # Makes a beep if circle was missed
+    if redo: 
+        win32api.Beep(750, 300)
+        errors +=1
+    else: 
+        circleStack[len(circleStack)-1][1] = errors
+        errors = 0
+    
+    if testsLeft > 0 or redo:
         startTimer()
         windowScreen.onclick(loopClick)
     else:
@@ -204,6 +212,7 @@ def resetCursor():
 def endScreen():
         drawTurtle.clear()
         turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
+        save()
         
 # Makes a consent screen
 def consentScreen():
@@ -229,7 +238,15 @@ def consentScreen():
     drawTurtle.setpos(0, -82)
     drawTurtle.write("I Agree", font=("Arial", 10, "bold"), align="center")
     drawTurtle.setpos(0, 0)
+
+def save():
+    csvfile = os.path.expanduser("~/Desktop") + "/rawData.csv"
     
+    #Exports a list of lists
+    with open(csvfile, "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        circleStack.insert(0,['Circle','Error'])
+        writer.writerows(circleStack)
 
 # Starts running the program
 generateTests()
