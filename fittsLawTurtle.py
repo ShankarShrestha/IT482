@@ -7,6 +7,7 @@ import math
 # Stores all unfinished 120 test cases
 circleTestBlocks = []
 
+# Stores points in accordance with cursor location to calculate distance
 distPoints = []
 
 # This function returns a randomly picked circle out of a set of 12 tests with 10 test blocks (120 tests)
@@ -131,7 +132,7 @@ def clicked(x, y):
         endScreen()
 
 # Adds cursor coordinates to a list of distPoints
-def addPoints():
+def addPoint():
     px, py = win32api.GetCursorPos()
     distPoints.append((px, py))
 
