@@ -38,7 +38,7 @@ def generateTests():
 
     # Creates 10 test blocks for each
     for i in range(len(circleBaseTests)):
-        for y in range(1):
+        for y in range(10):
             circleTestBlocks.append(circleBaseTests[i])
 
 
@@ -173,9 +173,9 @@ def loopClick(x, y):
 
         addPoint()
         print(distPoints)
-        del distPoints[:]
-        calcDistance()
-        print("Distance: {}".format(str(calcDistance())))
+        # del distPoints[:]
+        distance = calcDistance()
+        print("Distance: {}".format(str(distance)))
         
         startTimer()
         windowScreen.onclick(loopClick)
@@ -296,6 +296,7 @@ def save():
         writer = csv.writer(output, lineterminator='\n')
         circleStack.insert(0,['Circle','Error'])
         writer.writerows(circleStack)
+
 
 # Starts running the program
 generateTests()
