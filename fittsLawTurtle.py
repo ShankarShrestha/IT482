@@ -93,7 +93,7 @@ def createCircle(tur, circlePix):
     # radius = [12.5, 25, 50]
     
     tur.penup()
-    tur.setx(circlePix[1] * circlePix[2])
+    tur.goto((circlePix[1] * circlePix[2]), -(circlePix[0]))
     tur.pendown()
     drawCircle(tur, circlePix[0])
 
@@ -167,8 +167,8 @@ def currentTime():
 # @parm circlePix the pixel location of the circle center
 # @return hit equals true otherwise false
 def insideCircle(coor, circlePix):
-    return (math.sqrt((abs(coor[0]) - float(circlePix[1]))**2 + (abs(coor[1]) - 0)**2) < (float(circlePix[0])))
-    
+    return (math.hypot((coor[0] - (circlePix[1]*circlePix[2])), (coor[1] - 0)) <= (float(circlePix[0])))
+
 # Updates feedback to users with tracked progress
 def progressUpdate(testsLeft):
     progressTurtle.clear()
