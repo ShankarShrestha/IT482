@@ -6,6 +6,17 @@ import math
 import os.path
 import csv
 
+##
+# A simple interface to test Fitts' Law. This simplified experiment, 
+# measure users’ abilities to point and click on random circles shown 
+# on the screen for different value of the index of difficulty (ID) 
+# while using a Mouse or a Trackpad.
+#
+# Output for each test run is stored on the users desktop
+# ONLY WORKS with windows computers
+# 
+
+
 # Stores all unfinished 120 test cases
 circleTestBlocks = []
 
@@ -14,6 +25,7 @@ distPoints = []
 
 # Keeps track of what circles have been used in what order
 circleStack = []
+
 
 
 # This function returns a randomly picked circle out of a set of 12 tests with 10 test blocks (120 tests)
@@ -29,6 +41,7 @@ def getCircle(previous=False):
     return translateCircle(circle)
 
 
+
 # Makes 120 test from 12 base cases repeating each 10 times
 def generateTests():
     circleBaseTests = [('small', 'short', 'left'), ('medium', 'short', 'left'), ('large', 'short', 'left'),
@@ -42,6 +55,7 @@ def generateTests():
             circleTestBlocks.append(circleBaseTests[i])
 
 
+
 # Translates a circles dimensions to pixel values
 # @parm circleDim a tuple of dimensions values
 # @return a tuple in pixel equivalents of circle
@@ -51,6 +65,7 @@ def translateCircle(circleDim):
     distance = dimensions[circleDim[1]]
     direction = dimensions[circleDim[2]]
     return (radius, distance, direction)
+
 
 
 # Sets up screen property
@@ -67,14 +82,11 @@ drawTurtle = turtle.Turtle()
 drawTurtle.hideturtle()
 drawTurtle.speed(0)
 
-# pointerTurtle = turtle.Turtle()
-# pointerTurtle.left(125)
-# pointerTurtle.shapesize()
-
 progressTurtle = turtle.Turtle()
 progressTurtle.hideturtle()
 progressTurtle.penup()
 progressTurtle.setpos(0, -250)
+
 
 
 # This function draw blue circle based on radius
@@ -83,6 +95,7 @@ def drawCircle(tur, rad, color):
     tur.begin_fill()
     tur.circle(rad)
     tur.end_fill()
+
 
 
 # This function draw a rectangle on screen based on given values
@@ -101,15 +114,12 @@ def drawRectangle(tur, x, y, width, height):
     tur.penup()
 
 
+
 # This function draw circle at a distance based on distance list
 # @parm tur the turtle that draws
 # @parm circlePix a tuple of pixel valuse
 def createCircle(tur, circlePix, redo):
     tur.clear()
-
-    # Old code
-    # distance = [-500, -250, -100, 100, 250, 500]
-    # radius = [12.5, 25, 50]
 
     if redo:
         color = "Red"
@@ -122,21 +132,6 @@ def createCircle(tur, circlePix, redo):
     drawCircle(tur, circlePix[0], color)
 
 
-# Glow the circle -- Not working
-def glowCircle(tur):
-    tur.fillcolor("red")
-
-
-def unglowCircle(tur):
-    tur.fillcolor("blue")
-
-
-def handler_goto(x, y):
-    # pointerTurtle.penup()
-    # pointerTurtle.goto(x, y)
-    # pointerTurtle.goto(0, 0)
-    pass
-
 
 # Global values to identify missed clicks
 redo = False
@@ -144,18 +139,21 @@ circlePix = None
 errors = 0
 
 def loopClick(x, y):
+    global redo, circlePix, errors, clickTimer
     stopTimer()
-
-    # Controls a recursive function once it finishes all test cases
-    testsLeft = len(circleTestBlocks)
-    progressUpdate(testsLeft)
     
+    # If a circle has been tried it checks accuracy and stores data
+    if circlePix:
+        redo = not insideCircle((x, y), circlePix)
+        circleStack[len(circleStack)-1][2] = clickTimer
+        circleStack[len(circleStack)-1][3] = calcDistance()
+    
+    # Sets up for next
     resetCursor()
+    testsLeft = len(circleTestBlocks)
+    if not redo: progressUpdate(testsLeft)
     
-    global redo, circlePix, errors
-    if circlePix: redo = not insideCircle((x, y), circlePix)
-    
-    # Get a circle to test, translates to pixel values, and draws it
+    # Get a circle to test using pixel values to draws it
     circlePix = getCircle(redo)
     createCircle(drawTurtle, circlePix, redo)
     
@@ -167,14 +165,9 @@ def loopClick(x, y):
         circleStack[len(circleStack)-1][1] = errors
         errors = 0
     
+    # Controls a recursive function once it finishes all test cases
     if testsLeft > 0 or redo:
-
-        addPoint()
-        print(distPoints)
-        # del distPoints[:]
-        distance = calcDistance()
-        print("Distance: {}".format(str(distance)))
-        
+        distPoint()
         startTimer()
         windowScreen.onclick(loopClick)
     else:
@@ -182,21 +175,15 @@ def loopClick(x, y):
 
 
 
+# Gets coordinates of cursor
 def pointerCoordinates(event):
     x, y = event.x, event.y
     distPoints.append((x, y))
 
 
-def addPointerCoordinates():
-    pass
-
-
-
 
 # Adds cursor coordinates to a list of distPoints
-def addPoint():
-    # px, py = win32api.GetCursorPos()
-    # distPoints.append((px, py))
+def distPoint():
     bindScreen.bind('<Motion>', pointerCoordinates)
 
 
@@ -212,25 +199,24 @@ def calcDistance():
     return distance
 
 
+
 # Keeps time between clicks
 clickTimer = 0
-
 
 # Records start time
 def startTimer():
     global clickTimer
     clickTimer = currentTime()
 
-
 # Records end time
 def stopTimer():
     global clickTimer
     clickTimer = currentTime() - clickTimer
 
-
 # Returns the current time in milliseconds
 def currentTime():
     return int(round(time.time() * 1000))
+
 
 
 # Checks to see if circle was hit
@@ -241,10 +227,12 @@ def insideCircle(coor, circlePix):
     return (math.hypot((coor[0] - (circlePix[1] * circlePix[2])), (coor[1] - 0)) <= (float(circlePix[0])))
 
 
+
 # Updates feedback to users with tracked progress
 def progressUpdate(testsLeft):
     progressTurtle.clear()
     progressTurtle.write("Tests Left: " + str(testsLeft), font=("Arial", 12, "normal"), align="center")
+
 
 
 # Resets cursor to the center of the screen
@@ -254,11 +242,14 @@ def resetCursor():
     win32api.SetCursorPos((halfScreenWidth, halfScreenHight))
 
 
+
 # Clears window at the end and displays a thank you
 def endScreen():
     drawTurtle.clear()
     turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
     save()
+
+
 
 # Makes a consent screen
 def consentScreen():
@@ -285,19 +276,26 @@ def consentScreen():
     drawTurtle.write("I Agree", font=("Arial", 10, "bold"), align="center")
     drawTurtle.setpos(0, 0)
 
+
+
+# Calculates the index of difficulty
 def indexDifficulty(A, W):
     return math.log(A/W + 1)
+
+
 
 # Exports raw data to csv file on desktop
 def save():
     csvfile = os.path.expanduser("~/Desktop") + "/rawData.csv"
     
-    for index in range(len(circleStack)-1):
+    # Gets the 'A', 'W', 'ID' for each circle
+    for index in range(len(circleStack)):
         circlePix = translateCircle(circleStack[index][0])
         circleStack[index].append(circlePix[1])
         circleStack[index].append(circlePix[0]*2)
         circleStack[index].append(indexDifficulty(circlePix[1], circlePix[0]*2))
         
+    # Adds Header to data
     circleStack.insert(0,['Circle','Error','Time(ms)','Distance','A','W','ID'])
     
     #Exports a list of lists
@@ -306,9 +304,9 @@ def save():
         writer.writerows(circleStack)
 
 
+
 # Starts running the program
 generateTests()
 consentScreen()
-startTimer()
 windowScreen.onclick(loopClick)
 turtle.done()
