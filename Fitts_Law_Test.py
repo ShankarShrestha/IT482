@@ -1,6 +1,6 @@
 import turtle
 import random
-import win32api
+import win32api, win32con
 import time
 import math
 import os.path
@@ -51,7 +51,7 @@ def generateTests():
 
     # Creates 10 test blocks for each
     for i in range(len(circleBaseTests)):
-        for y in range(10):
+        for y in range(1):
             circleTestBlocks.append(circleBaseTests[i])
 
 
@@ -86,6 +86,10 @@ progressTurtle = turtle.Turtle()
 progressTurtle.hideturtle()
 progressTurtle.penup()
 progressTurtle.setpos(0, -250)
+
+writeTurtle = turtle.Turtle()
+writeTurtle.hideturtle()
+writeTurtle.speed(0)
 
 
 
@@ -171,7 +175,16 @@ def loopClick(x, y):
         startTimer()
         windowScreen.onclick(loopClick)
     else:
-        endScreen()
+        simClick()
+        windowScreen.onclick(endScreen)
+
+
+
+# Simulates a fake click to escape loop
+def simClick():
+    x,y = win32api.GetCursorPos() 
+    win32api.SetCursorPos((x,y)) 
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
 
 
 
@@ -244,9 +257,9 @@ def resetCursor():
 
 
 # Clears window at the end and displays a thank you
-def endScreen():
+def endScreen(x, y):
     drawTurtle.clear()
-    turtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
+    writeTurtle.write("Thank you", font=("Arial", 30, "normal"), align="center")
     save()
 
 
