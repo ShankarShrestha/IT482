@@ -22,7 +22,7 @@ def getCircle(previous=False):
     circle = None
     if len(circleTestBlocks) > 0 and not previous:
         index = random.randint(0, len(circleTestBlocks)-1)
-        circleStack.append([circleTestBlocks[index],0,0])
+        circleStack.append([circleTestBlocks[index],None,None,None])
         circle = circleTestBlocks.pop(index)
     else:
         circle = circleStack[len(circleStack)-1][0]
@@ -38,7 +38,7 @@ def generateTests():
 
     # Creates 10 test blocks for each
     for i in range(len(circleBaseTests)):
-        for y in range(10):
+        for y in range(1):
             circleTestBlocks.append(circleBaseTests[i])
 
 
@@ -285,14 +285,24 @@ def consentScreen():
     drawTurtle.write("I Agree", font=("Arial", 10, "bold"), align="center")
     drawTurtle.setpos(0, 0)
 
+def indexDifficulty(A, W):
+    return math.log(A/W + 1)
+
 # Exports raw data to csv file on desktop
 def save():
     csvfile = os.path.expanduser("~/Desktop") + "/rawData.csv"
     
+    for index in range(len(circleStack)-1):
+        circlePix = translateCircle(circleStack[index][0])
+        circleStack[index].append(circlePix[1])
+        circleStack[index].append(circlePix[0]*2)
+        circleStack[index].append(indexDifficulty(circlePix[1], circlePix[0]*2))
+        
+    circleStack.insert(0,['Circle','Error','Time(ms)','Distance','A','W','ID'])
+    
     #Exports a list of lists
     with open(csvfile, "w") as output:
         writer = csv.writer(output, lineterminator='\n')
-        circleStack.insert(0,['Circle','Error', 'Distance'])
         writer.writerows(circleStack)
 
 
