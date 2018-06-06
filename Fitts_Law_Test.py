@@ -197,6 +197,7 @@ def pointerCoordinates(event):
 
 # Adds cursor coordinates to a list of distPoints
 def distPoint():
+    distPoints.clear()
     bindScreen.bind('<Motion>', pointerCoordinates)
 
 
