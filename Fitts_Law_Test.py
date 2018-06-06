@@ -299,17 +299,24 @@ def indexDifficulty(A, W):
 
 # Exports raw data to csv file on desktop
 def save():
-    csvfile = os.path.expanduser("~/Desktop") + "/rawData.csv"
+    csvfile = os.path.expanduser("~/Desktop") + "/Raw_Data.csv"
     
-    # Gets the 'A', 'W', 'ID' for each circle
     for index in range(len(circleStack)):
-        circlePix = translateCircle(circleStack[index][0])
+        circleDim = circleStack[index][0]
+        circlePix = translateCircle(circleDim)
+        # Sets the 'A', 'W', 'ID' for each circle
         circleStack[index].append(circlePix[1])
         circleStack[index].append(circlePix[0]*2)
         circleStack[index].append(indexDifficulty(circlePix[1], circlePix[0]*2))
+        # Breaks up circle tuple
+        circleStack[index].insert(0,circleDim[0])
+        circleStack[index].insert(1,circleDim[1])
+        circleStack[index].insert(2,circleDim[2])
+        circleStack[index].remove(circleDim)
+        
         
     # Adds Header to data
-    circleStack.insert(0,['Circle','Error','Time(ms)','Distance','A','W','ID'])
+    circleStack.insert(0,['Size','Gap','Side','Error','Time(ms)','Distance','A','W','ID'])
     
     #Exports a list of lists
     with open(csvfile, "w") as output:
