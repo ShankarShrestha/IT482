@@ -294,7 +294,7 @@ def consentScreen():
 
 # Calculates the index of difficulty
 def indexDifficulty(A, W):
-    return math.log(A/W + 1)
+    return math.log2(A/W + 1)
 
 
 
